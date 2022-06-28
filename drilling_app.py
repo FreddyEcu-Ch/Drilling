@@ -1,6 +1,6 @@
 # Import python libraries
 import streamlit as st
-#import plotly_express as px
+import plotly_express as px
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -66,8 +66,8 @@ def well_traj(dataframe):
     x_axis_val = st.selectbox("Select dispns", options=df.columns)
     y_axis_val = st.selectbox("Select dispew", options=df.columns)
     z_axis_val = st.selectbox("Select tvd", options=df.columns)
-    #fig = px.line_3d(dataframe, x_axis_val, y_axis_val, z_axis_val)
-    #st.plotly_chart(fig)
+    fig = px.line_3d(dataframe, x_axis_val, y_axis_val, z_axis_val)
+    st.plotly_chart(fig)
 
 
 # Call file if exist

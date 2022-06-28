@@ -6,9 +6,9 @@ import pandas as pd
 from PIL import Image
 
 # Page Layout
-st.set_page_config(page_title="Drilling App")
+st.set_page_config(page_title="Drilling App", page_icon='')
 
-# CSS codes to improve the design of the web app
+# CSS cod🛢 to improve the design of the web app
 st.markdown(
     """
 <style>

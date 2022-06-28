@@ -1,7 +1,6 @@
 # Import python libraries
 import streamlit as st
-import plotly.express as px
-import numpy as np
+import plotly_express as px
 import pandas as pd
 from PIL import Image
 

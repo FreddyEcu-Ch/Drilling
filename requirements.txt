@@ -1,0 +1,6 @@
+numpy
+pandas
+plotly-express==0.4.0
+streamlit==1.8.0
+pillow
+

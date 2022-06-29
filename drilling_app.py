@@ -2,6 +2,7 @@
 import streamlit as st
 import plotly_express as px
 import pandas as pd
+from streamlit_option_menu import option_menu
 from PIL import Image
 
 # Page Layout
@@ -49,8 +50,13 @@ st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 st.sidebar.title("Navigation")
 uploaded_file = st.sidebar.file_uploader("Upload your csv file here")
 
+
 # Pages
-options = st.sidebar.radio("Pages", options=["Home", "Data", "3D Wells", "Basic Calculations"])
+#options = st.sidebar.radio("Pages", options=["Home", "Data", "3D Wells", "Basic Calculations"])
+with st.sidebar:
+    options = option_menu(menu_title="Main Menu",
+                          options=["Home", "Data", "3D Wells", "Basic Calculations"],
+                          icons=["house", "clipboard-data", "tv", "calculator"])
 
 
 # Useful functions

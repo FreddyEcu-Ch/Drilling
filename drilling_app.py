@@ -43,7 +43,7 @@ st.image(image, width=100, use_column_width=True)
 st.markdown("**Drilling Fundamentals**")
 video = open("drilling.mp4", "rb")
 st.video(video)
-st.markdown("**Ulterra Drilling Techologies (2015). What is and Oil & Gas well?**")
+st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 
 # Sidebar
 st.sidebar.title("Navigation")

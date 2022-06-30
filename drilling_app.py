@@ -6,7 +6,7 @@ from streamlit_option_menu import option_menu
 from PIL import Image
 
 # Insert icon of web app
-icon = Image.open('res.png')
+icon = Image.open('well.jpg')
 # Page Layout
 st.set_page_config(page_title="Drilling App", page_icon=icon)
 

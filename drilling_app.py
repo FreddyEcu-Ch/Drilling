@@ -6,7 +6,7 @@ from streamlit_option_menu import option_menu
 from PIL import Image
 
 # Insert icon of web app
-icon = Image.open('well.jpg')
+icon = Image.open("well.jpg")
 # Page Layout
 st.set_page_config(page_title="Drilling App", page_icon=icon)
 
@@ -29,14 +29,19 @@ st.title("Drilling Engineering App :link:")
 
 st.write("---")
 
-st.markdown("""This App consists of plotting 3D wells trajectories as well as drilling
+st.markdown(
+    """This App consists of plotting 3D wells trajectories as well as drilling
  basic calculations.
  - **Python Libraries:** streamlit, pandas, numpy, plotly, PIL
- """)
+ """
+)
 
 # Fill in information about the project implemented in this app
 expander_bar = st.expander("About")
-expander_bar.write("This project consists of plotting 3D well trajectories as well as drilling basic calculations.")
+expander_bar.write(
+    "This project consists of plotting 3D well trajectories as well as drilling basic"
+    " calculations."
+)
 
 # Insert image
 image = Image.open("dd.jpg")
@@ -54,11 +59,12 @@ uploaded_file = st.sidebar.file_uploader("Upload your csv file here")
 
 
 # Pages
-#options = st.sidebar.radio("Pages", options=["Home", "Data", "3D Wells", "Basic Calculations"])
 with st.sidebar:
-    options = option_menu(menu_title="Main Menu",
-                          options=["Home", "Data", "3D Wells", "Basic Calculations"],
-                          icons=["house", "clipboard-data", "tv", "calculator"])
+    options = option_menu(
+        menu_title="Main Menu",
+        options=["Home", "Data", "3D Wells", "Basic Calculations"],
+        icons=["house", "clipboard-data", "tv", "calculator"],
+    )
 
 
 # Useful functions
@@ -84,6 +90,5 @@ if uploaded_file:
 # Call options of web app
 if options == "Data":
     data(df)
-elif options =="3D Wells":
+elif options == "3D Wells":
     well_traj(df)
-

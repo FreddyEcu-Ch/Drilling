@@ -25,7 +25,7 @@ body {background-color: #DCE3D5;
 )
 
 # Ttile of app
-st.title("Drilling Engineering App")
+st.title("Drilling Engineering App :link:")
 
 st.write("---")
 
@@ -49,7 +49,7 @@ st.video(video)
 st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 
 # Sidebar
-st.sidebar.title("Navigation")
+st.sidebar.title(":arrow_down_small: **Navigation**")
 uploaded_file = st.sidebar.file_uploader("Upload your csv file here")
 
 

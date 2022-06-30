@@ -6,7 +6,7 @@ from streamlit_option_menu import option_menu
 from PIL import Image
 
 # Insert icon of web app
-icon = Image.open("well.jpg")
+icon = Image.open("resources/well.jpg")
 # Page Layout
 st.set_page_config(page_title="Drilling App", page_icon=icon)
 
@@ -44,12 +44,12 @@ expander_bar.write(
 )
 
 # Insert image
-image = Image.open("dd.jpg")
+image = Image.open("resources/dd.jpg")
 st.image(image, width=100, use_column_width=True)
 
 # Adding a mp4 video
 st.markdown("**Drilling Fundamentals**")
-video = open("drilling.mp4", "rb")
+video = open("resources/drilling.mp4", "rb")
 st.video(video)
 st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 

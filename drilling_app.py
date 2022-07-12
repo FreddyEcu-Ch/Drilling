@@ -10,7 +10,7 @@ icon = Image.open("resources/well.jpg")
 # Page Layout
 st.set_page_config(page_title="Drilling App", page_icon=icon)
 
-# CSS cod🛢 to improve the design of the web app
+# CSS code to improve the design of the web app
 st.markdown(
     """
 <style>

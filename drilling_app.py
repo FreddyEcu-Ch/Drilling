@@ -151,7 +151,7 @@ if options == "Data":
 elif options == "3D Wells":
     well_traj(df)
 elif options == "Basic Calculations":
-    if st.checkbox("Well-Type J"):
+    if st.checkbox("J-Type Well"):
         st.subheader("**Enter input values**")
         tvd = st.number_input("Enter tvd value: ")
         kop = st.number_input("Enter kop value: ")
@@ -160,7 +160,7 @@ elif options == "Basic Calculations":
         st.subheader("**Show results**")
         well_J(Data(tvd, kop, bur, dh))
 
-    elif st.checkbox("well-Type S"):
+    elif st.checkbox("S-Type Well"):
         st.subheader("**Enter input values**")
         tvd = st.number_input("Enter tvd value: ")
         kop = st.number_input("Enter kop value: ")

@@ -141,7 +141,7 @@ def well_J(data: Data, unit="ingles") -> Output:
             st.success(f"{param}: {value:.3f} ft")
 
 
-# Pozo S por Glenda
+# Pozo S
 # Functions to calculate well profiles
 Data = namedtuple("Input", "TVD KOP BUR DOR DH")
 Output = namedtuple(

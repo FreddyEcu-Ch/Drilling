@@ -133,12 +133,87 @@ def well_J(data: Data, unit="ingles") -> Output:
         Tan_len=tan_len,
         Md_total=md_total,
     )
-    names = ['R', 'theta', 'tvd_EOB', 'MD_EOB', 'DH_EOB', 'Length_tan', 'MD_Total']
+    names = ["R", "theta", "tvd_EOB", "MD_EOB", "DH_EOB", "Length_tan", "MD_Total"]
     for param, value in zip(names, output):
-        if param == 'theta':
+        if param == "theta":
             st.success(f"{param}: {value:.3f} degrees")
         else:
             st.success(f"{param}: {value:.3f} ft")
+
+
+# Pozo S por Glenda
+# Functions to calculate well profiles
+Data = namedtuple("Input", "TVD KOP BUR DOR DH")
+Output = namedtuple(
+    "Output",
+    "R1 R2 Theta TVD_EOB Md_EOB Dh_EOB Lengh_tan Md_SOD TVD_SOD Dh_SOD Md_total",
+)
+
+
+def well_S(data: Data, unit="ingles") -> Output:
+    # Call input values
+    tvd = data.TVD
+    kop = data.KOP
+    bur = data.BUR
+    dor = data.DOR
+    dh = data.DH
+    if unit == "ingles":
+        R1 = 5729.58 / bur
+    else:
+        R1 = 1718.87 / bur
+    if unit == "ingles":
+        R2 = 5729.58 / dor
+    else:
+        R2 = 1718.87 / dor
+    if dh > (R1 + R2):
+        fe = dh - (R1 + R2)
+    elif dh < (R1 + R2):
+        fe = (R1 + R2) - dh
+    eo = tvd - kop
+    foe = degrees(atan(fe / eo))
+    of = sqrt(fe**2 + eo**2)
+    fg = R1 + R2
+    fog = degrees(asin(fg / of))
+    eog = fog - foe
+    tvd_eob = kop + (R1 * sin(radians(eog)))
+    md_eob = kop + ((eog / bur) * 100)
+    d1 = R1 - R1 * cos(radians(eog))
+    bc = sqrt(of**2 - fg**2)
+    sod_md = kop + ((eog / bur) * 100) + bc
+    sod_tvd = tvd_eob + (bc * cos(radians(eog)))
+    d2 = d1 + (bc * sin(radians(eog)))
+    md = kop + (((eog / bur) * 100) + bc) + ((eog / dor) * 100)
+    TALLER = Output(
+        R1=R1,
+        R2=R2,
+        Theta=eog,
+        TVD_EOB=tvd_eob,
+        Md_EOB=md_eob,
+        Dh_EOB=d1,
+        Lengh_tan=bc,
+        Md_SOD=sod_md,
+        TVD_SOD=sod_tvd,
+        Dh_SOD=d2,
+        Md_total=md,
+    )
+    namesS = [
+        "R1",
+        "R2",
+        "Theta",
+        "TVD_EOB",
+        "Md_EOB",
+        "Dh_EOB",
+        "Lengh_tan",
+        "Md_SOD",
+        "TVD_SOD",
+        "Dh_SOD",
+        "Md_total",
+    ]
+    for params, values in zip(namesS, TALLER):
+        if params == "Theta":
+            print(f"{params} -> {values:.3f} degrees")
+        else:
+            print(f"{params} -> {values:.3f} ft")
 
 
 # Call file if exist
@@ -167,3 +242,5 @@ elif options == "Basic Calculations":
         dh = st.number_input("Enter dh value: ")
         bur = st.number_input("Enter bur value: ")
         dor = st.number_input("Enter dor value: ")
+        st.subheader("**Show results**")
+        well_S(Data(tvd, kop, bur, dor, dh))

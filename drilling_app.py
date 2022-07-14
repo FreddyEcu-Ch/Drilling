@@ -56,6 +56,9 @@ st.video(video)
 st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 
 # Sidebar
+# Add image to the the left section
+logo = Image.open('resources/ESPOL.png')
+st.sidebar.image(logo)
 st.sidebar.title(":arrow_down_small: **Navigation**")
 uploaded_file = st.sidebar.file_uploader("Upload your csv file here")
 
@@ -89,7 +92,7 @@ def well_traj(dataframe):
 Data = namedtuple("Input", "TVD KOP BUR DH")
 Output = namedtuple("Output", "R Theta TVD_EOB Md_EOB Dh_EOB Tan_len Md_total")
 
-
+# Function to calculate parameteres of a J-well type
 def well_J(data: Data, unit="ingles") -> Output:
     # Call input values
     tvd = data.TVD
@@ -133,12 +136,105 @@ def well_J(data: Data, unit="ingles") -> Output:
         Tan_len=tan_len,
         Md_total=md_total,
     )
-    names = ['R', 'theta', 'tvd_EOB', 'MD_EOB', 'DH_EOB', 'Length_tan', 'MD_Total']
+    names = ["R", "theta", "tvd_EOB", "MD_EOB", "DH_EOB", "Length_tan", "MD_Total"]
     for param, value in zip(names, output):
-        if param == 'theta':
-            st.success(f"{param}: {value:.3f} degrees")
+        if unit == 'ingles':
+            if param == "theta":
+                st.success(f"{param}: {value:.3f} degrees")
+            else:
+                st.success(f"{param}: {value:.3f} ft")
         else:
-            st.success(f"{param}: {value:.3f} ft")
+            if param == "theta":
+                st.success(f"{param}: {value:.3f} degrees")
+            else:
+                st.success(f"{param}: {value:.3f} m")
+
+
+# Function to calculate parameters of a S-Well type
+Data_S = namedtuple("Input", "TVD KOP BUR DOR DH")
+Output_S = namedtuple(
+    "Output", "R1 R2 Theta TVD_EOB Md_EOB Dh_EOB Tan_len Md_SOD TVD_SOD Dh_SOD Md_total"
+)
+
+
+def well_S(data: Data_S, unit="ingles"):
+    tvd = data.TVD
+    kop = data.KOP
+    bur = data.BUR
+    dor = data.DOR
+    dh = data.DH
+    if unit == "ingles":
+        R1 = 5729.58 / bur
+        R2 = 5729.58 / dor
+    else:
+        R1 = 1718.87 / bur
+        R2 = 1718.87 / dor
+    if dh > (R1 + R2):
+        fe = dh - (R1 + R2)
+    elif dh < (R1 + R2):
+        fe = R1 - (dh - R2)
+    eo = tvd - kop
+    foe = degrees(atan(fe / eo))
+    of = sqrt(fe**2 + eo**2)
+    fg = R1 + R2
+    fog = degrees(asin(fg / of))
+    theta = fog - foe
+    tvd_eob = kop + R1 * sin(radians(theta))
+    if unit == "ingles":
+        md_eob = kop + (theta / bur) * 100
+    else:
+        md_eob = kop + (theta / bur) * 30
+    dh_eob = R1 - abs(R1 * cos(radians(theta)))
+    tan_len = sqrt(of**2 - fg**2)
+    if unit == "ingles":
+        md_sod = kop + (theta / bur) * 100 + tan_len
+    else:
+        md_sod = kop + (theta / bur) * 30 + tan_len
+    tvd_sod = tvd_eob + tan_len * abs(cos(radians(theta)))
+    dh_sod = dh_eob + abs(tan_len * sin(radians(theta)))
+    if unit == "ingles":
+        md_total = kop + (theta / bur) * 100 + tan_len + (theta / dor) * 100
+    else:
+        md_total = kop + (theta / bur) * 30 + tan_len + (theta / dor) * 30
+
+    output_S = Output_S(
+        R1=R1,
+        R2=R2,
+        Theta=theta,
+        TVD_EOB=tvd_eob,
+        Md_EOB=md_eob,
+        Dh_EOB=dh_eob,
+        Tan_len=tan_len,
+        Md_SOD=md_sod,
+        TVD_SOD=tvd_sod,
+        Dh_SOD=dh_sod,
+        Md_total=md_total,
+    )
+
+    names = [
+        "R1",
+        "R2",
+        "theta",
+        "tvd_EOB",
+        "Md_EOB",
+        "Dh_EOB",
+        "Lengh_tan",
+        "Md_SOD",
+        "tvd_SOD",
+        "Dh_SOD",
+        "Md_Total",
+    ]
+    for param, value in zip(names, output_S):
+        if unit == 'ingles':
+            if param == "theta":
+                st.success(f"{param} -> {value:.3f} degrees")
+            else:
+                st.success(f"{param} -> {value:.3f} ft")
+        else:
+            if param == "theta":
+                st.success(f"{param} -> {value:.3f} degrees")
+            else:
+                st.success(f"{param} -> {value:.3f} m")
 
 
 # Call file if exist
@@ -151,6 +247,8 @@ if options == "Data":
 elif options == "3D Wells":
     well_traj(df)
 elif options == "Basic Calculations":
+    st.subheader('Select Units')
+    units = st.selectbox('Units', ('ingles', 'métrico'))
     if st.checkbox("J-Type Well"):
         st.subheader("**Enter input values**")
         tvd = st.number_input("Enter tvd value: ")
@@ -158,12 +256,13 @@ elif options == "Basic Calculations":
         bur = st.number_input("Enter bur value: ")
         dh = st.number_input("Enter dh value: ")
         st.subheader("**Show results**")
-        well_J(Data(tvd, kop, bur, dh))
+        well_J(Data(tvd, kop, bur, dh), units)
 
     elif st.checkbox("S-Type Well"):
         st.subheader("**Enter input values**")
         tvd = st.number_input("Enter tvd value: ")
         kop = st.number_input("Enter kop value: ")
-        dh = st.number_input("Enter dh value: ")
         bur = st.number_input("Enter bur value: ")
         dor = st.number_input("Enter dor value: ")
+        dh = st.number_input("Enter dh value: ")
+        well_S((Data_S(tvd, kop, bur, dor, dh)), units)

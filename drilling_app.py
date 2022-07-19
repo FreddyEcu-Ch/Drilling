@@ -57,7 +57,7 @@ st.caption("Ulterra Drilling Techologies (2015). What is and Oil & Gas well?")
 
 # Sidebar
 # Add image to the the left section
-logo = Image.open('resources/ESPOL.png')
+logo = Image.open("resources/ESPOL.png")
 st.sidebar.image(logo)
 st.sidebar.title(":arrow_down_small: **Navigation**")
 uploaded_file = st.sidebar.file_uploader("Upload your csv file here")
@@ -138,7 +138,7 @@ def well_J(data: Data, unit="ingles") -> Output:
     )
     names = ["R", "theta", "tvd_EOB", "MD_EOB", "DH_EOB", "Length_tan", "MD_Total"]
     for param, value in zip(names, output):
-        if unit == 'ingles':
+        if unit == "ingles":
             if param == "theta":
                 st.success(f"{param}: {value:.3f} degrees")
             else:
@@ -225,7 +225,94 @@ def well_S(data: Data_S, unit="ingles"):
         "Md_Total",
     ]
     for param, value in zip(names, output_S):
-        if unit == 'ingles':
+        if unit == "ingles":
+            if param == "theta":
+                st.success(f"{param}: {value:.3f} degrees")
+            else:
+                st.success(f"{param}: {value:.3f} ft")
+        else:
+            if param == "theta":
+                st.success(f"{param}: {value:.3f} degrees")
+            else:
+                st.success(f"{param}: {value:.3f} m")
+
+
+# Function to calculate parameters of a Horizontal Well
+Data_H = namedtuple("Input", "TVD KOP BUR1 BUR2 DH")
+Output_H = namedtuple(
+    "Output", "R1 R2 Theta TVD_EOB1 Md_EOB1 Dh_EOB1 Tan_len Md_SOB2 Md_total"
+)
+
+
+def well_H(data: Data_H, unit="ingles"):
+    # Define the variables
+    tvd = data.TVD
+    kop = data.KOP
+    bur1 = data.BUR1
+    bur2 = data.BUR2
+    dh = data.DH
+    # Define curvature radius
+    if unit == "ingles":
+        R1 = 5729.58 / bur1
+        R2 = 5729.58 / bur2
+    else:
+        R1 = 1718.87 / bur1
+        R2 = 1718.87 / bur2
+
+    eg = (tvd - kop) - R2
+    eo = dh - R1
+    goe = degrees(atan(eg / eo))
+    og = sqrt(eg**2 + eo**2)
+    of = R1 - R2
+    gof = degrees(acos(of / og))
+    # angle of tangent section
+    theta = 180 - goe - gof
+    # tvd @ EOB1
+    tvd_eob1 = kop + (R1 * sin(radians(theta)))
+    # MD @ EOB1
+    if unit == "ingles":
+        md_eob1 = kop + (theta / bur1) * 100
+    else:
+        md_eob1 = kop + (theta / bur1) * 30
+    # dh @ EOB1
+    dh_eob1 = R1 - (R1 * cos(radians(theta)))
+    # BC segment
+    tan_len = sqrt(og**2 - of**2)
+    if unit == "ingles":
+        md_sob2 = kop + (theta / bur1) * 100 + tan_len
+    else:
+        md_sob2 = kop + (theta / bur1) * 30 + tan_len
+    # MD total
+    if unit == "ingles":
+        md_total = kop + (theta / bur1) * 100 + tan_len + ((90 - theta) / bur2) * 100
+    else:
+        md_total = kop + (theta / bur1) * 30 + tan_len + ((90 - theta) / bur2) * 30
+
+    output_H = Output_H(
+        R1=R1,
+        R2=R2,
+        Theta=theta,
+        TVD_EOB1=tvd_eob1,
+        Md_EOB1=md_eob1,
+        Dh_EOB1=dh_eob1,
+        Tan_len=tan_len,
+        Md_SOB2=md_sob2,
+        Md_total=md_total,
+    )
+
+    names = [
+        "R1",
+        "R2",
+        "Theta",
+        "TVD_EOB1",
+        "Md_EOB1",
+        "Dh_EOB1",
+        "Tan_len",
+        "Md_SOB2",
+        "Md_total",
+    ]
+    for param, value in zip(names, output_H):
+        if unit == "ingles":
             if param == "theta":
                 st.success(f"{param}: {value:.3f} degrees")
             else:
@@ -247,8 +334,8 @@ if options == "Data":
 elif options == "3D Wells":
     well_traj(df)
 elif options == "Basic Calculations":
-    st.subheader('Select Units')
-    units = st.selectbox('Units', ('ingles', 'métrico'))
+    st.subheader("Select Units")
+    units = st.selectbox("Units", ("ingles", "métrico"))
     if st.checkbox("J-Type Well"):
         st.subheader("**Enter input values**")
         tvd = st.number_input("Enter tvd value: ")
@@ -266,3 +353,11 @@ elif options == "Basic Calculations":
         dor = st.number_input("Enter dor value: ")
         dh = st.number_input("Enter dh value: ")
         well_S((Data_S(tvd, kop, bur, dor, dh)), units)
+
+    elif st.checkbox("Horizontal well"):
+        tvd = st.number_input("Enter tvd value: ")
+        kop = st.number_input("Enter kop value: ")
+        bur1 = st.number_input("Enter bur1 value: ")
+        bur2 = st.number_input("Enter bur2 value: ")
+        dh = st.number_input("Enter dh value: ")
+        well_H(Data_H(tvd, kop, bur1, bur2, dh), units)

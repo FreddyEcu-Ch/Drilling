@@ -227,14 +227,14 @@ def well_S(data: Data_S, unit="ingles"):
     for param, value in zip(names, output_S):
         if unit == 'ingles':
             if param == "theta":
-                st.success(f"{param} -> {value:.3f} degrees")
+                st.success(f"{param}: {value:.3f} degrees")
             else:
-                st.success(f"{param} -> {value:.3f} ft")
+                st.success(f"{param}: {value:.3f} ft")
         else:
             if param == "theta":
-                st.success(f"{param} -> {value:.3f} degrees")
+                st.success(f"{param}: {value:.3f} degrees")
             else:
-                st.success(f"{param} -> {value:.3f} m")
+                st.success(f"{param}: {value:.3f} m")
 
 
 # Call file if exist
